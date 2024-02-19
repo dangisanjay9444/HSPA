@@ -24,7 +24,7 @@ getProperty(id: number) {
 getAllProperties(SellRent?:number): Observable<IProperty[]> {
 
   //return this.http.get<IProperty[]>('data/Properties.json')
-  
+
    return this.http.get<IProperty[]>('data/Properties.json').pipe(
      map(data =>{
 
@@ -46,9 +46,9 @@ getAllProperties(SellRent?:number): Observable<IProperty[]> {
               {
                 propertiesArray.push(newProperty[id]);
               }
-              
-            }              
-        }  
+
+            }
+        }
 
        for(const id in data)
        {
@@ -68,9 +68,9 @@ getAllProperties(SellRent?:number): Observable<IProperty[]> {
        return propertiesArray;
 
      }
-      
+
        )
-   );   
+   );
 }
 
 addProperty(property : Property){
@@ -78,17 +78,17 @@ addProperty(property : Property){
 
   //add new property in array if newProp already exists in local Storage
   const itemFromLocalStorage = localStorage.getItem('newProp');
-  if (itemFromLocalStorage !== null) 
+  if (itemFromLocalStorage !== null)
     {
       newProp = [property, ...JSON.parse(itemFromLocalStorage)];
     }
-  
+
   localStorage.setItem('newProp', JSON.stringify(newProp));
 }
 
 newPropID(){
   const itemFromLocalStorage = localStorage.getItem('PID');
-  if (itemFromLocalStorage !== null) 
+  if (itemFromLocalStorage !== null)
     {
      return (+itemFromLocalStorage) + 1;
     }
@@ -97,6 +97,11 @@ newPropID(){
      localStorage.setItem('PID', '101');
      return 101;
   }
+}
+
+getAllCities():Observable<string[]>
+{
+  return this.http.get<string[]>('http://localhost:5000/api/City');
 }
 
 }

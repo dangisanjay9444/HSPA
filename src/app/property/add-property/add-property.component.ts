@@ -24,6 +24,7 @@ export class AddPropertyComponent implements OnInit {
   propertyType: Array<String> = ['Appartment','Villa','Duplex'];
   furnishType: Array<String> = ['Fully','Semi','Unfurnished'];
   mainEnterance: Array<String> = ['East','West','North','South'];
+  cityList!: any[];//string[];
 
   propertyView: IPropertyBase = {
     Id: null,
@@ -32,19 +33,26 @@ export class AddPropertyComponent implements OnInit {
     PType: null,
     FType: null,
     Name: '',
-    City: null,
+    City: '',
     Price: null,
     BuildArea: null,
-    RTM: null    
+    RTM: null
   };
 
-  constructor(private fb: FormBuilder, 
-              private router: Router, 
+  constructor(private fb: FormBuilder,
+              private router: Router,
               private housingService: HousingService,
               private alertify : AlertyfyService) { }
 
   ngOnInit() {
     this.CreateAddPropertyForm();
+    this.housingService.getAllCities().subscribe(data =>
+        {
+          console.log(data);
+          this.cityList = data;
+        }
+      );
+
   }
 
   mapProperty(): void {
@@ -90,14 +98,14 @@ export class AddPropertyComponent implements OnInit {
         CarpetArea : [null],
         Security : [null],
         Maintenance : [null]
-      }),    
+      }),
 
       AddressInfo : this.fb.group({
         FloorNo : [null],
         TotalFloor : [null],
         Address : [null, Validators.required],
         Landmark : [null]
-      }),    
+      }),
 
       OtherInfo : this.fb.group({
         RTM : [null, Validators.required],
@@ -172,7 +180,7 @@ export class AddPropertyComponent implements OnInit {
     {
       this.formTabs.tabs[tabId].active = true;
     }
-    
+
   }
 
   // #region <getter methods>
@@ -189,7 +197,7 @@ export class AddPropertyComponent implements OnInit {
             get OtherInfo(){
               return this.addPropertyForm.controls['OtherInfo'] as FormGroup;
             }
-      // #endregion      
+      // #endregion
       // #region <FormControls>
             // Basic Info Controls
             get SellRent(){
