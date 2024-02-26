@@ -28,10 +28,10 @@ namespace WebAPI.Controllers
             uow = _uow;
             mapper = _mapper;
         }
-
-        [AllowAnonymous]
+        
         //api/city
-        [HttpGet]
+        [HttpGet("cities")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCities()
         {
             //throw new UnauthorizedAccessException();

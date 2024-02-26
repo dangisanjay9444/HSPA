@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Globalization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Data.SqlClient;
 
 namespace WebAPI
 {
@@ -39,8 +40,16 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = new SqlConnectionStringBuilder(
+                Configuration.GetConnectionString("Default"));
+            builder.Password = Configuration.GetSection("DBPassword").Value;
+            var connectonstring = builder.ConnectionString;   
+
             services.AddDbContext<DataContext>(Options => 
-                        Options.UseSqlServer(Configuration.GetConnectionString("Default")));
+                        Options.UseSqlServer(connectonstring));
+
+            // services.AddDbContext<DataContext>(Options => 
+            //             Options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddControllers().AddNewtonsoftJson();
             services.AddCors();
             //services.AddScoped<ICityRepository, CityRepository>();
@@ -70,6 +79,9 @@ namespace WebAPI
             //app.UseMiddleware<ExceptionMiddleware>();        
 
             app.UseRouting();
+
+            app.UseHsts();
+            app.UseHttpsRedirection();
 
             app.UseCors(m => m.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
