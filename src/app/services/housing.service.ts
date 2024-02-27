@@ -101,7 +101,7 @@ newPropID(){
 
 getAllCities():Observable<string[]>
 {
-  return this.http.get<string[]>('http://localhost:5000/api/City/cities');
+   return this.http.get<string[]>('http://localhost:5000/api/City/cities');
 }
 
 }
