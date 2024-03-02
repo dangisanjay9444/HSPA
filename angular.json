@@ -74,10 +74,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "hspa:build:production"
+              "buildTarget": "hspa:build:production"
             },
             "development": {
-              "browserTarget": "hspa:build:development"
+              "buildTarget": "hspa:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -85,7 +85,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "hspa:build"
+            "buildTarget": "hspa:build"
           }
         },
         "test": {
