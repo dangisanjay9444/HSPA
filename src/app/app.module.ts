@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http'
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GalleryComponent, GalleryItem } from '@daelmaak/ngx-gallery';
 
@@ -25,6 +25,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PropertyDetailResolverService } from './property/property-detail/property-detail-resolver.service';
 import { FilterPipe } from './Pipe/filter.pipe';
 import { SortPipe } from './Pipe/sort.pipe';
+import { HttpErrorInterceptorService } from './services/httperror-interceptor.service';
 
 const appRoutes : Routes = [
     //Bydefault url
@@ -64,6 +65,11 @@ const appRoutes : Routes = [
     GalleryComponent
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptorService,
+      multi: true
+    },
     HousingService,
     UserService,
     AlertyfyService,

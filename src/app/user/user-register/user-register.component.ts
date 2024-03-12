@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { User } from 'src/app/model/user';
+import { UserForRegister } from 'src/app/model/user';
 import { AlertyfyService } from 'src/app/services/alertyfy.service';
-import { UserService } from 'src/app/services/user.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-user-register',
@@ -14,10 +14,10 @@ export class UserRegisterComponent implements OnInit {
 
   userSubmitted ?: boolean;
   //will store form information in the below user variable
-  user ?: User;
+  user ?: UserForRegister;
 
   constructor(private fb:FormBuilder, 
-              private userService: UserService,
+              private authService: AuthService,
               private alertyfyService:AlertyfyService) { }
 
   ngOnInit() {
@@ -65,7 +65,7 @@ export class UserRegisterComponent implements OnInit {
   // Getter methods for all formcontrols
   //
 
-  userData(): User{
+  userData(): UserForRegister{
     return this.user = {
       userName: this.userName.value,
       email: this.email.value,
@@ -99,10 +99,18 @@ export class UserRegisterComponent implements OnInit {
     //this.user = Object.assign(this.user,this.registrationForm.value)
     //localStorage.setItem('Users', JSON.stringify(this.user))
     //this.userService.addUsers(this.user);
-    this.userService.addUsers(this.userData());
-    this.registrationForm.reset();
-    this.userSubmitted = false
-    this.alertyfyService.success("Congrats, you have successfully registered")
+    // this.userService.addUsers(this.userData());
+        this.authService.registerUser(this.userData()).subscribe( () => {
+        this.registrationForm.reset();
+        this.userSubmitted = false
+        this.alertyfyService.success("Congrats, you have successfully registered")
+      }
+      //commented because now we are using the http interceptor to handle the errors globally
+      // , error => {
+      // console.log(error);
+      // this.alertyfyService.error(error.error);
+      // }
+      );    
     }
     else
     {
