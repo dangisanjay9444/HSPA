@@ -30,11 +30,12 @@ export class PropertyDetailComponent implements OnInit {
           (data: any) => {
             if (data) {
               this.property = data as Property;
+              this.property.age  = this.housingService.getPropertyAge(this.property.estPossessionOn);
             }
           },error => this.router.navigate(['/'])
         );
       }
-    )  
+    )     
 
     this.galleryImages = [
       {

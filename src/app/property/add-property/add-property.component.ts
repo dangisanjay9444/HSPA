@@ -1,8 +1,10 @@
 import { animateChild } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
+import { IKeyValuePair } from 'src/app/model/ikeyvaluepair';
 import { IPropertyBase } from 'src/app/model/ipropertybase';
 import { Property } from 'src/app/model/property';
 import { AlertyfyService } from 'src/app/services/alertyfy.service';
@@ -21,30 +23,43 @@ export class AddPropertyComponent implements OnInit {
   property = new Property();
 
 //later will fetch these information from the master tables
-  propertyType: Array<String> = ['Appartment','Villa','Duplex'];
-  furnishType: Array<String> = ['Fully','Semi','Unfurnished'];
+  // propertyType: Array<String> = ['Appartment','Villa','Duplex'];
+  // furnishType: Array<String> = ['Fully','Semi','Unfurnished'];
+
+ //fetch these information from the master tables 
+  propertyType!: IKeyValuePair[];
+  furnishType!: IKeyValuePair[];
+  
   mainEnterance: Array<String> = ['East','West','North','South'];
   cityList!: any[];//string[];
 
   propertyView: IPropertyBase = {
-    Id: null,
-    SellRent: null,
-    BHK: null,
-    PType: null,
-    FType: null,
-    Name: '',
-    City: '',
-    Price: null,
-    BuildArea: null,
-    RTM: null
+    id: null,
+    sellRent: null,
+    bhk: null,
+    propertyType: null,
+    furnishingType: null,
+    name: '',
+    city: '',
+    price: null,
+    buildArea: null,
+    readyToMove: null
   };
 
   constructor(private fb: FormBuilder,
+              private datepipe: DatePipe,
               private router: Router,
               private housingService: HousingService,
               private alertify : AlertyfyService) { }
 
   ngOnInit() {
+
+    if(!localStorage.getItem('userName'))
+    {
+      this.alertify.error('You must be logged in to add new property !');
+      this.router.navigate(['/user/login']);
+    }
+
     this.CreateAddPropertyForm();
     this.housingService.getAllCities().subscribe(data =>
         {
@@ -53,32 +68,57 @@ export class AddPropertyComponent implements OnInit {
         }
       );
 
+    this.housingService.getPropertyTypes().subscribe(data =>{
+          this.propertyType = data;
+        }
+    );
+
+    this.housingService.getFurnishingTypes().subscribe(data =>{
+      this.furnishType = data;
+    }
+);
+
   }
 
+  handlePriceChange(event: any) {
+    // Parse the input value to an integer and assign to propertyView.price
+    this.propertyView.price = parseInt(event.target.value);
+  }
+
+  handleBuildAreaChange(event: any) {
+    // Parse the input value to an integer and assign to propertyView.price
+    this.propertyView.buildArea = parseInt(event.target.value);
+  }
+
+  // updateEstPossessionOn(value: string) {
+  //   // Parse the string value to a Date object
+  //   this.propertyView.estPossessionOn = new Date(value);
+  // }
+
   mapProperty(): void {
-    this.property.Id = this.housingService.newPropID();
-    this.property.SellRent = +this.SellRent.value;
-    this.property.BHK = this.BHK.value;
-    this.property.PType = this.PType.value;
-    this.property.Name = this.Name.value;
-    this.property.City = this.City.value;
-    this.property.FType = this.FType.value;
-    this.property.Price = this.Price.value;
-    this.property.Security = this.Security.value;
-    this.property.Maintenance = this.Maintenance.value;
-    this.property.BuildArea = this.BuildArea.value;
-    this.property.CarpetArea = this.CarpetArea.value;
-    this.property.FloorNo = this.FloorNo.value;
-    this.property.TotalFloor = this.TotalFloor.value;
-    this.property.Address = this.Address.value;
-    this.property.Address2 = this.Landmark.value;
-    this.property.RTM = this.RTM.value;
-    this.property.AOP = this.AOP.value;
-    this.property.Gated = this.Gated.value;
-    this.property.MainEntrance = this.MainEnterance.value;
-    this.property.PossessionOn = this.PossessionOn.value;
-    this.property.Description = this.Description.value;
-    this.property.PostedOn = new Date().toString();
+    this.property.id = this.housingService.newPropID();
+    this.property.sellRent = +this.SellRent.value;
+    this.property.bhk = this.BHK.value;
+    this.property.propertyTypeId = this.PType.value;
+    this.property.name = this.Name.value;
+    this.property.cityId = this.City.value;
+    this.property.furnishingTypeId = this.FType.value;
+    this.property.price = this.Price.value;
+    this.property.security = this.Security.value;
+    this.property.maintenance = this.Maintenance.value;
+    this.property.buildArea = this.BuildArea.value;
+    this.property.carpertArea = this.CarpetArea.value;
+    this.property.floorNo = this.FloorNo.value;
+    this.property.totalFloor = this.TotalFloor.value;
+    this.property.address = this.Address.value;
+    this.property.address2 = this.Landmark.value;
+    this.property.readyToMove = this.RTM.value;
+    // this.property.age = this.AOP.value;
+    this.property.gated = this.Gated.value;
+    this.property.mainEntrance = this.MainEnterance.value;
+    this.property.estPossessionOn = this.datepipe.transform(this.PossessionOn.value, 'MM/dd/yyyy');
+    this.property.description = this.Description.value;
+    // this.property.PostedOn = new Date().toString();
   }
 
   CreateAddPropertyForm(){
@@ -96,8 +136,8 @@ export class AddPropertyComponent implements OnInit {
         Price : [null, Validators.required],
         BuildArea : [null, Validators.required],
         CarpetArea : [null],
-        Security : [null],
-        Maintenance : [null]
+        Security : [0],
+        Maintenance : [0]
       }),
 
       AddressInfo : this.fb.group({
@@ -109,7 +149,7 @@ export class AddPropertyComponent implements OnInit {
 
       OtherInfo : this.fb.group({
         RTM : [null, Validators.required],
-        PossessionOn : [null],
+        PossessionOn : [null, Validators.required],
         AOP : [null],
         Gated : [null],
         MainEnterance : [null],
@@ -129,20 +169,24 @@ export class AddPropertyComponent implements OnInit {
     if (this.allTabsValid())
     {
       this.mapProperty();
-      this.housingService.addProperty(this.property);
-      this.alertify.success('Conrats, Property added Successfully')
-      //console.log(Form);
-      console.log("SellRent=" + this.addPropertyForm.value.SellRent)
-      console.log(this.addPropertyForm);
-
-      if (this.SellRent.value == 2)
-      {
-        this.router.navigate(['/rent-property'])
-      }
-      else
-      {
-        this.router.navigate(['/'])
-      }
+      this.housingService.addProperty(this.property).subscribe(
+        () => {
+          this.alertify.success('Conrats, Property added Successfully')
+          //console.log(Form);
+          console.log("SellRent=" + this.addPropertyForm.value.SellRent)
+          console.log(this.addPropertyForm);
+    
+          if (this.SellRent.value == 2)
+          {
+            this.router.navigate(['/rent-property'])
+          }
+          else
+          {
+            this.router.navigate(['/'])
+          }
+        }
+      );
+      
     }
     else
     {
