@@ -44,11 +44,15 @@ export class HttpErrorInterceptorService implements HttpInterceptor{
             {
                 return error.statusText;
             }
-
             //server side error
             if(error.error.errorMessage && error.status !==0)
             {
-                errorMessage = error.error.errorMessage;
+                {errorMessage = error.error.errorMessage;}
+            }
+            //if the errormessage is empty then show the plain text as errorMessage
+            if(!error.error.errormessage && error.error && error.status !==0)
+            {
+                {errorMessage = error.error;}
             }
         }
         return errorMessage;

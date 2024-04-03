@@ -139,37 +139,58 @@ newPropID(){
 }
 
 getPropertyAge(dateOfEstablishment:any):string
-{
-  const today = new Date();
-  const estDate = new Date(dateOfEstablishment);
-  let age = today.getFullYear() - estDate.getFullYear();
-  const m = today.getMonth() - estDate.getMonth();
-
-  //current month smaller than establishment month or
-  //same month and current date is smaller than the establishment date 
-  if(m < 0 || (m === 0 && today.getDate() < estDate.getDate()) )
   {
-    age -- ;
+    const today = new Date();
+    const estDate = new Date(dateOfEstablishment);
+    let age = today.getFullYear() - estDate.getFullYear();
+    const m = today.getMonth() - estDate.getMonth();
+
+    //current month smaller than establishment month or
+    //same month and current date is smaller than the establishment date 
+    if(m < 0 || (m === 0 && today.getDate() < estDate.getDate()) )
+    {
+      age -- ;
+    }
+
+    //estDate is a future date 
+    if(today < estDate)
+    {
+      return '0';
+    }
+
+  // age is less than a year
+    if (age === 0)
+    {
+      return 'less than a year'
+    }
+    else
+    {
+      return age.toString();
+    }
+
   }
 
-  //estDate is a future date 
-  if(today < estDate)
+  setPropertyPhoto(propertyId:number, propertyPhotoId: string)
   {
-    return '0';
+    const httpOptions = {
+      headers:new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post(this.baseUrl + '/property/set-primary-photo/'+String(propertyId)
+            +'/'+propertyPhotoId, {}, httpOptions);
   }
 
- // age is less than a year
-  if (age === 0)
+  deletePhoto(propertyId:number, propertyPhotoId: string)
   {
-    return 'less than a year'
-  }
-  else
-  {
-    return age.toString();
+    const httpOptions = {
+      headers:new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.delete(this.baseUrl + '/property/delete-photo/'+String(propertyId)
+            +'/'+propertyPhotoId, httpOptions);
   }
 
 }
 
-
-
-}

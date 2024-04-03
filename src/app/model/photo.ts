@@ -1,6 +1,6 @@
 export interface Photo
 {
     imageUrl:string;
-    publicid:string;
+    publicId:string;
     isPrimary:boolean
 }

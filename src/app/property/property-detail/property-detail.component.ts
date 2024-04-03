@@ -32,10 +32,11 @@ export class PropertyDetailComponent implements OnInit {
             if (data) {
               this.property = data as Property;
               this.property.age  = this.housingService.getPropertyAge(this.property.estPossessionOn);
-              console.log(this.property.photos)
-              console.log(this.getPropertyPhotos())
+              // console.log(this.property.photos)
+              // console.log(this.getPropertyPhotos())
 
               // Assign galleryImages inside the subscription block
+              
           this.galleryImages = this.getPropertyPhotos();
             }
           },error => this.router.navigate(['/'])
@@ -71,6 +72,10 @@ export class PropertyDetailComponent implements OnInit {
     //   },
     // ];    
     
+  }
+
+  changePrimaryPhoto(mainPhotoUrl: string){
+    this.mainPhotoUrl = mainPhotoUrl;
   }
 
   getPropertyPhotos(): { src: string; thumbSrc: string }[] {

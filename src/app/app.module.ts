@@ -27,6 +27,8 @@ import { FilterPipe } from './Pipe/filter.pipe';
 import { SortPipe } from './Pipe/sort.pipe';
 import { HttpErrorInterceptorService } from './services/httperror-interceptor.service';
 import { DatePipe } from '@angular/common';
+import { PhotoEditorComponent } from './property/photo-editor/photo-editor.component';
+import { FileUploadModule } from 'ng2-file-upload';
 
 const appRoutes : Routes = [
     //Bydefault url
@@ -50,7 +52,8 @@ const appRoutes : Routes = [
     UserLoginComponent,
     UserRegisterComponent,
     FilterPipe,
-    SortPipe
+    SortPipe,
+    PhotoEditorComponent
    ],
   imports: [
     BrowserModule,
@@ -63,7 +66,8 @@ const appRoutes : Routes = [
     TabsModule.forRoot(),
     ButtonsModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    GalleryComponent
+    GalleryComponent,
+    FileUploadModule
   ],
   providers: [
     {
